@@ -36,7 +36,7 @@ def process_files(file1, file2):
     output_df["PROMOTION_PLAN_ENDDATE"] = ""
     output_df["PRODUCT_SEGMENT_OFFER"] = merged_df["OfferSegment"]
     output_df["PRODUCT_ID"] = "IM3"
-    output_df["SERVICE_CLASS_LEGACY"] = ""
+    output_df["SERVICE_CLASS_LEGACY"] = merged_df["SC_LEGACY"]
     output_df["FULFILLMENT_MODE"] = "D"
 
     # Save the output DataFrame to a BytesIO object (for download)
