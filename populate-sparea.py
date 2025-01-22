@@ -1,12 +1,16 @@
 import pandas as pd
 import streamlit as st
 from io import BytesIO
+import time
 
 # Function to handle the processing
-def process_files(file1, file2):
+def process_files(file1, file2, progress_bar):
     # Load the two CSV files into pandas DataFrames
+    progress_bar.progress(10)
     df1 = pd.read_csv(file1)
+    progress_bar.progress(30)
     df2 = pd.read_csv(file2)
+    progress_bar.progress(50)
 
     # Create a new DataFrame for the output
     output_df = pd.DataFrame(columns=[
@@ -19,6 +23,7 @@ def process_files(file1, file2):
 
     # Merge the two DataFrames based on AREA_GROUP
     merged_df = pd.merge(df2, df1, on="AREA_GROUP", how="left")
+    progress_bar.progress(70)
 
     # Populate the output DataFrame from the merged DataFrame
     output_df["AREA"] = merged_df["AREACODE"].apply(lambda x: str(x).zfill(3))
@@ -40,9 +45,11 @@ def process_files(file1, file2):
     output_df["FULFILLMENT_MODE"] = "D"
 
     # Save the output DataFrame to a BytesIO object (for download)
+    progress_bar.progress(90)
     output_file = BytesIO()
     output_df.to_csv(output_file, index=False)
     output_file.seek(0)
+    progress_bar.progress(100)
     return output_file
 
 # Streamlit UI
@@ -56,8 +63,14 @@ def main():
     if file1 is not None and file2 is not None:
         st.write("Processing the files...")
 
+        # Initialize progress bar
+        progress_bar = st.progress(0)
+
         # Process the files and get the output file
-        output_file = process_files(file1, file2)
+        output_file = process_files(file1, file2, progress_bar)
+
+        # Display completion flag
+        st.success("Processing completed!")
 
         # Allow the user to download the output file
         st.download_button(
